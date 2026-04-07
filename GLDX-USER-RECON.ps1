@@ -4,6 +4,51 @@ pour identifier les potentiels problèmes de configuration et de sécurité
 Auteur : William BRODIER
 Date des denières modification : 18/08/2025 
 ####>
+
+$BarVert = [char]0x2502
+$TeeBar = [char]0x251C
+$Elbow = [char]0x2514
+$Line = [char]0x2500
+
+function Info {
+	Write-Host "[" -NoNewLine
+	Write-Host "*" -ForegroundColor Cyan -NoNewLine
+	Write-Host "] " -NoNewLine
+	return "[*]"
+}
+function Valid {
+	Write-Host "[" -NoNewLine
+	Write-Host "+" -ForegroundColor Green -NoNewLine
+	Write-Host "] " -NoNewLine
+	return "[+]"
+}
+function Unvalid {
+	Write-Host "[" -NoNewLine
+	Write-Host "x" -ForegroundColor Red -NoNewLine
+	Write-Host "] " -NoNewLine
+	return "[x]"
+}
+function Mitigate {
+	Write-Host "[" -NoNewLine
+	Write-Host "~" -ForegroundColor DarkYellow -NoNewLine
+	Write-Host "] " -NoNewLine
+	return "[~]"	
+}
+function Error {
+	Write-Host "[" -NoNewLine
+	Write-Host "!" -ForegroundColor Red -NoNewLine
+	Write-Host "] " -NoNewLine
+	return "[!]"
+}
+
+function Neutral {
+	Write-Host "[" -NoNewLine
+	Write-Host "$Line" -ForegroundColor White -NoNewLine
+	Write-Host "] " -NoNewLine
+	return "[$Line]"
+}
+
+
 function Write-Both {
 	param(
 		[string]$message,
