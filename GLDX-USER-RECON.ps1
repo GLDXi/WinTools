@@ -4,6 +4,95 @@ pour identifier les potentiels problèmes de configuration et de sécurité
 Auteur : William BRODIER
 Date des denières modification : 18/08/2025 
 ####>
+function Write-Both {
+	param(
+		[string]$message,
+		[string]$balise,
+		[string]$space = "",
+		[string]$color = ""
+	)
+	if ($color -eq "") {
+		if ($balise -eq "") {
+			write-Host "$message"
+			Write-Output "$message" | Out-File -Append "$(pwd)\$script:SaveName.txt"
+		} else {
+			write-Host "$message"
+			Write-Output "$space$balise $message" | Out-File -Append "$(pwd)\$script:SaveName.txt"
+		}
+	} elseif ($color -eq "true"){
+		if ($balise -eq "") {
+			$wordsToColor = @("pwd", "pass", "passwd", "password", "motdepasse", "mot_de_passe", "mdp", "cred", "credential", "ids", "identifiant", "login", "compte")
+			foreach ($mot in $message.Split("\")){
+				if ($wordsToColor -contains $mot.ToLower()) {
+					Write-Host $mot -NoNewline -ForegroundColor Yellow
+				} else {
+					Write-Host $mot -NoNewline
+				}
+				Write-Host " " -NoNewline
+			}
+			Write-Host ""
+			Write-Output "$message" | Out-File -Append "$(pwd)\$script:SaveName.txt"
+		} else {
+			$wordsToColor = @("pwd", "pass", "passwd", "password", "motdepasse", "mot_de_passe", "mdp", "cred", "credential", "ids", "identifiant", "login", "compte")
+			$parts = $message -split '\\'
+			foreach ($part in $parts){
+				$found = $false
+				foreach ($word in $wordsToColor) {
+					if ($part.ToLower().Contains($word)) {
+						$found = $true
+						# Découpe la partie : avant / mot-clé / après
+						$index = $part.ToLower().IndexOf($word)
+						$before = $part.Substring(0, $index)
+						$match  = $part.Substring($index, $word.Length)
+						$after  = $part.Substring($index + $word.Length)
+						Write-Host $before -NoNewline
+						Write-Host $match -NoNewline -ForegroundColor Red
+						Write-Host $after -NoNewline
+						break
+					}
+				}
+				if (-not $found) {
+					Write-Host $part -NoNewline
+				}
+				Write-Host "\" -NoNewline
+			}
+			Write-Host ""
+			Write-Output "$space$balise $message" | Out-File -Append "$(pwd)\$script:SaveName.txt"
+		}
+	}
+}
+
+function Write-Allin {
+	param(
+		[string]$CustomMessage,
+		[string]$CustomBalise = "None",
+		[string]$CustomSpace = "",
+		[string]$CustomColor = ""
+	)
+	if ($CustomColor -eq ""){
+		switch ($CustomBalise){
+			"Info" { Write-Host "$CustomSpace" -NoNewline; $InfoBalise = Info; Write-Both -message "$CustomMessage" -balise "$InfoBalise" -space "$CustomSpace" }
+			"Valid" { Write-Host "$CustomSpace" -NoNewline; $ValidBalise = Valid; Write-Both -message "$CustomMessage" -balise "$ValidBalise" -space "$CustomSpace" }
+			"Unvalid" { Write-Host "$CustomSpace" -NoNewline; $UnvalidBalise = Unvalid; Write-Both -message "$CustomMessage" -balise "$UnvalidBalise" -space "$CustomSpace" }
+			"Mitigate"{ Write-Host "$CustomSpace" -NoNewline; $MitigateBalise = Mitigate ;Write-Both -message "$CustomMessage" -balise "$MitigateBalise" -space "$CustomSpace" }
+			"Error" { Write-Host "$CustomSpace" -NoNewline; $ErrorBalise = Error; Write-Both -message "$CustomMessage" -balise "$ErrorBalise" -space "$CustomSpace" }
+			"Neutral" { Write-Host "$CustomSpace" -NoNewline; $NeutralBalise = Neutral; Write-Both -message "$CustomMessage" -balise "$NeutralBalise" -space "$CustomSpace" }
+			"None" { Write-Both -message "$CustomMessage" }
+		}
+	} elseif ($CustomColor -eq "True"){
+		switch ($CustomBalise){
+			"Info" { Write-Host "$CustomSpace" -NoNewline; $InfoBalise = Info; Write-Both -message "$CustomMessage" -balise "$InfoBalise" -space "$CustomSpace" }
+			"Valid" { Write-Host "$CustomSpace" -NoNewline; $ValidBalise = Valid; Write-Both -message "$CustomMessage" -balise "$ValidBalise" -space "$CustomSpace" }
+			"Unvalid" { Write-Host "$CustomSpace" -NoNewline; $UnvalidBalise = Unvalid; Write-Both -message "$CustomMessage" -balise "$UnvalidBalise" -space "$CustomSpace" }
+			"Mitigate"{ Write-Host "$CustomSpace" -NoNewline; $MitigateBalise = Mitigate ;Write-Both -message "$CustomMessage" -balise "$MitigateBalise" -space "$CustomSpace" }
+			"Error" { Write-Host "$CustomSpace" -NoNewline; $ErrorBalise = Error; Write-Both -message "$CustomMessage" -balise "$ErrorBalise" -space "$CustomSpace" }
+			"Neutral" { Write-Host "$CustomSpace" -NoNewline; $NeutralBalise = Neutral; Write-Both -message "$CustomMessage" -balise "$NeutralBalise" -space "$CustomSpace" -color $CustomColor}
+			"None" { Write-Both -message "$CustomMessage" }
+		}
+	}
+	
+}
+
 
 $script:SharedChecked = $false
 $script:CChecked -eq $false
@@ -54,7 +143,8 @@ function File_Searcher {
 	}
 	
 	
-	Write-Host "`n`n"
+	Write-Host "`n"
+	Write-Output "" | Out-File -Append "$(pwd)\$script:SaveName.txt"
 
 	if ($script:SharedChecked -eq $false){
 		Write-Allin -CustomMessage "Recherche de fichiers susceptibles de contenir des identifiants/mots de passe dans des lecteurs reseaux" -CustomBalise "Info"
