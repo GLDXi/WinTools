@@ -1,4 +1,4 @@
-<#### Password Checker v2
+<#### Password Checker
 
 Auteur : William BRODIER
 Date des denières modification : 18/08/2025 
