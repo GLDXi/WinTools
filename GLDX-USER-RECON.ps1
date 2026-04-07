@@ -139,8 +139,9 @@ function Write-Allin {
 
 
 $script:SharedChecked = $true
-$script:CChecked = $false
-$script:SharedName = "D:/"
+$script:CChecked = $true
+$script:SharedName = "D:\"
+$script:CName = "C:/"
 
 function File_Searcher {
 	<#### Ce module vérifie à partir du chemin "C:\Users\$UserProfile" s'il existe des fichiers susceptibles
