@@ -1,5 +1,4 @@
-<#### Ce script est destiné à faire une analyse global d'un environnement utilisateur
-pour identifier les potentiels problèmes de configuration et de sécurité 
+<#### password Checker 
 
 Auteur : William BRODIER
 Date des denières modification : 18/08/2025 
