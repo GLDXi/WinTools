@@ -96,3 +96,5 @@ function File_Searcher {
 		}
 	}
 }
+
+File_Searcher
